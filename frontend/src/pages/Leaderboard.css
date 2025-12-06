@@ -1,0 +1,223 @@
+.leaderboard-page {
+  padding: var(--spacing-xl) var(--spacing-lg);
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.user-rank-card {
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-xl);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xl);
+  margin-bottom: var(--spacing-2xl);
+  box-shadow: var(--shadow-lg);
+}
+
+.rank-badge {
+  width: 80px;
+  height: 80px;
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--white);
+}
+
+.user-rank-info {
+  flex: 1;
+}
+
+.user-rank-info h3 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--white);
+  margin-bottom: 0.25rem;
+}
+
+.user-rank-info p {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 1rem;
+}
+
+.user-rank-score {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.2);
+  padding: var(--spacing-lg);
+  border-radius: var(--radius-md);
+}
+
+.score-large {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--white);
+  line-height: 1;
+}
+
+.score-label-small {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.9rem;
+  margin-top: 0.25rem;
+}
+
+.leaderboard-container {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.leaderboard-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.leaderboard-table thead {
+  background-color: var(--secondary);
+}
+
+.leaderboard-table th {
+  padding: var(--spacing-lg);
+  text-align: left;
+  font-weight: 700;
+  color: var(--text-primary);
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
+  border-bottom: 2px solid var(--border);
+}
+
+.leaderboard-table td {
+  padding: var(--spacing-lg);
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--border);
+}
+
+.leaderboard-table tbody tr {
+  transition: var(--transition);
+}
+
+.leaderboard-table tbody tr:hover {
+  background-color: var(--primary);
+}
+
+.current-user-row {
+  background-color: var(--secondary) !important;
+  border-left: 4px solid var(--accent);
+}
+
+.rank-cell {
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: var(--accent-light);
+}
+
+.name-cell {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.score-cell {
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--accent-light);
+}
+
+.groups-leaderboard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  padding: var(--spacing-lg);
+}
+
+.group-rank-card {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-lg);
+  padding: var(--spacing-lg);
+  background-color: var(--primary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  transition: var(--transition);
+}
+
+.group-rank-card:hover {
+  background-color: var(--secondary);
+  transform: translateX(8px);
+}
+
+.rank-number {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--accent-light);
+  min-width: 50px;
+}
+
+.group-rank-info {
+  flex: 1;
+}
+
+.group-rank-info h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.25rem;
+}
+
+.group-rank-info p {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.group-score {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--accent-light);
+}
+
+.table-container {
+  overflow-x: auto;
+}
+
+.problem-section {
+  background-color: var(--primary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-lg);
+}
+
+.groups-selection {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: var(--spacing-md);
+  padding: var(--spacing-md);
+  background-color: var(--primary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+@media (max-width: 768px) {
+  .user-rank-card {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .leaderboard-table {
+    font-size: 0.85rem;
+  }
+  
+  .leaderboard-table th,
+  .leaderboard-table td {
+    padding: var(--spacing-sm);
+  }
+  
+  .groups-selection {
+    grid-template-columns: 1fr;
+  }
+}
