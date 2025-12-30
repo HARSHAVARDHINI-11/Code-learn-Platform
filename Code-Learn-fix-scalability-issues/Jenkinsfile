@@ -1,0 +1,159 @@
+pipeline {
+    agent any
+    
+    environment {
+        DOCKER_REGISTRY = 'your-registry'
+        AWS_REGION = 'us-east-1'
+        EKS_CLUSTER_NAME = 'codelearn-cluster'
+    }
+    
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+        
+        stage('Build') {
+            steps {
+                script {
+                    sh 'mvn clean package -DskipTests'
+                }
+            }
+        }
+        
+        stage('Unit Tests') {
+            steps {
+                script {
+                    sh 'mvn test'
+                }
+            }
+        }
+        
+        stage('Code Quality Analysis') {
+            steps {
+                script {
+                    sh 'mvn sonar:sonar'
+                }
+            }
+        }
+        
+        stage('Build Docker Images') {
+            parallel {
+                stage('API Gateway') {
+                    steps {
+                        dir('api-gateway') {
+                            sh 'docker build -t ${DOCKER_REGISTRY}/api-gateway:${BUILD_NUMBER} .'
+                            sh 'docker tag ${DOCKER_REGISTRY}/api-gateway:${BUILD_NUMBER} ${DOCKER_REGISTRY}/api-gateway:latest'
+                        }
+                    }
+                }
+                stage('User Service') {
+                    steps {
+                        dir('user-service') {
+                            sh 'docker build -t ${DOCKER_REGISTRY}/user-service:${BUILD_NUMBER} .'
+                            sh 'docker tag ${DOCKER_REGISTRY}/user-service:${BUILD_NUMBER} ${DOCKER_REGISTRY}/user-service:latest'
+                        }
+                    }
+                }
+                stage('Post Service') {
+                    steps {
+                        dir('post-service') {
+                            sh 'docker build -t ${DOCKER_REGISTRY}/post-service:${BUILD_NUMBER} .'
+                            sh 'docker tag ${DOCKER_REGISTRY}/post-service:${BUILD_NUMBER} ${DOCKER_REGISTRY}/post-service:latest'
+                        }
+                    }
+                }
+                stage('Group Service') {
+                    steps {
+                        dir('group-service') {
+                            sh 'docker build -t ${DOCKER_REGISTRY}/group-service:${BUILD_NUMBER} .'
+                            sh 'docker tag ${DOCKER_REGISTRY}/group-service:${BUILD_NUMBER} ${DOCKER_REGISTRY}/group-service:latest'
+                        }
+                    }
+                }
+                stage('Contest Service') {
+                    steps {
+                        dir('contest-service') {
+                            sh 'docker build -t ${DOCKER_REGISTRY}/contest-service:${BUILD_NUMBER} .'
+                            sh 'docker tag ${DOCKER_REGISTRY}/contest-service:${BUILD_NUMBER} ${DOCKER_REGISTRY}/contest-service:latest'
+                        }
+                    }
+                }
+                stage('Notification Service') {
+                    steps {
+                        dir('notification-service') {
+                            sh 'docker build -t ${DOCKER_REGISTRY}/notification-service:${BUILD_NUMBER} .'
+                            sh 'docker tag ${DOCKER_REGISTRY}/notification-service:${BUILD_NUMBER} ${DOCKER_REGISTRY}/notification-service:latest'
+                        }
+                    }
+                }
+            }
+        }
+        
+        stage('Push Docker Images') {
+            steps {
+                script {
+                    sh 'docker push ${DOCKER_REGISTRY}/api-gateway:${BUILD_NUMBER}'
+                    sh 'docker push ${DOCKER_REGISTRY}/api-gateway:latest'
+                    sh 'docker push ${DOCKER_REGISTRY}/user-service:${BUILD_NUMBER}'
+                    sh 'docker push ${DOCKER_REGISTRY}/user-service:latest'
+                    sh 'docker push ${DOCKER_REGISTRY}/post-service:${BUILD_NUMBER}'
+                    sh 'docker push ${DOCKER_REGISTRY}/post-service:latest'
+                    sh 'docker push ${DOCKER_REGISTRY}/group-service:${BUILD_NUMBER}'
+                    sh 'docker push ${DOCKER_REGISTRY}/group-service:latest'
+                    sh 'docker push ${DOCKER_REGISTRY}/contest-service:${BUILD_NUMBER}'
+                    sh 'docker push ${DOCKER_REGISTRY}/contest-service:latest'
+                    sh 'docker push ${DOCKER_REGISTRY}/notification-service:${BUILD_NUMBER}'
+                    sh 'docker push ${DOCKER_REGISTRY}/notification-service:latest'
+                }
+            }
+        }
+        
+        stage('Deploy to Kubernetes') {
+            steps {
+                script {
+                    sh 'kubectl apply -f k8s/'
+                    sh 'kubectl rollout status deployment/api-gateway'
+                    sh 'kubectl rollout status deployment/user-service'
+                    sh 'kubectl rollout status deployment/post-service'
+                    sh 'kubectl rollout status deployment/group-service'
+                    sh 'kubectl rollout status deployment/contest-service'
+                    sh 'kubectl rollout status deployment/notification-service'
+                }
+            }
+        }
+        
+        stage('Health Check') {
+            steps {
+                script {
+                    sh 'sleep 30'
+                    sh 'kubectl get pods'
+                    sh 'kubectl get services'
+                }
+            }
+        }
+    }
+    
+    post {
+        success {
+            echo 'Pipeline executed successfully!'
+            emailext (
+                subject: "SUCCESS: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
+                body: "Build succeeded: ${env.BUILD_URL}",
+                recipientProviders: [[$class: 'DevelopersRecipientProvider']]
+            )
+        }
+        failure {
+            echo 'Pipeline execution failed!'
+            emailext (
+                subject: "FAILURE: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
+                body: "Build failed: ${env.BUILD_URL}",
+                recipientProviders: [[$class: 'DevelopersRecipientProvider']]
+            )
+        }
+        always {
+            cleanWs()
+        }
+    }
+}
