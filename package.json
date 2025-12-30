@@ -1,29 +1,21 @@
 {
   "name": "codelearn-platform",
-  "version": "1.0.0",
-  "description": "Professional Social Learning Platform for Coding",
-  "main": "index.js",
+  "version": "2.0.0",
+  "description": "Professional Social Learning Platform for Coding - Spring Boot + React",
   "scripts": {
-    "start": "node backend/server.js",
-    "server": "nodemon backend/server.js",
-    "client": "npm start --prefix frontend",
-    "dev": "concurrently \"npm run server\" \"npm run client\"",
-    "install-all": "npm install && cd frontend && npm install"
+    "start:backend": "cd backend-spring && mvn spring-boot:run",
+    "start:frontend": "cd frontend && npm start",
+    "dev": "concurrently \"npm run start:backend\" \"npm run start:frontend\"",
+    "build:backend": "cd backend-spring && mvn clean package -DskipTests",
+    "install:frontend": "cd frontend && npm install",
+    "legacy:start": "node backend/server.js",
+    "legacy:server": "nodemon backend/server.js",
+    "legacy:dev": "concurrently \"npm run legacy:server\" \"npm run start:frontend\""
   },
-  "keywords": ["mern", "coding", "learning", "social"],
+  "keywords": ["spring-boot", "react", "coding", "learning", "social", "java"],
   "author": "",
   "license": "ISC",
-  "dependencies": {
-    "bcryptjs": "^2.4.3",
-    "cors": "^2.8.5",
-    "dotenv": "^16.0.3",
-    "express": "^4.18.2",
-    "express-validator": "^7.0.1",
-    "jsonwebtoken": "^9.0.0",
-    "mongoose": "^7.0.3"
-  },
   "devDependencies": {
-    "concurrently": "^8.0.1",
-    "nodemon": "^2.0.22"
+    "concurrently": "^8.0.1"
   }
 }

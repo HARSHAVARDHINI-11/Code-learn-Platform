@@ -1,0 +1,41 @@
+spring:
+  application:
+    name: codelearn-platform
+  
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/codelearn
+      auto-index-creation: true
+  
+  jackson:
+    default-property-inclusion: non_null
+    serialization:
+      write-dates-as-timestamps: false
+
+server:
+  port: 5000
+  error:
+    include-message: always
+    include-binding-errors: always
+
+# JWT Configuration
+jwt:
+  secret: ${JWT_SECRET:mySecretKeyForJWTTokenGenerationWhichShouldBeVeryLongAndSecure2024!@#$%}
+  expiration: 604800000  # 7 days in milliseconds
+
+# Logging
+logging:
+  level:
+    root: INFO
+    com.codelearn: DEBUG
+    org.springframework.security: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+
+# OpenAPI Documentation
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operationsSorter: method
